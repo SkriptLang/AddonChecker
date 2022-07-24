@@ -1,0 +1,3 @@
+*.java      text diff=java
+*.class     binary
+*.jar       binary
