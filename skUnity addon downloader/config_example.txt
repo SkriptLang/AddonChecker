@@ -1,0 +1,21 @@
+# Only the JSON part below should be copied to config.txt
+# 
+# SKUNITY_API_KEY is your skUnuity API key, see https://docs.skunity.com/admin/api
+# GITHUB_USERNAME is your username on GitHub
+# GITHUB_ACCESS_TOKEN is your password or a Personal Access Token (https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token, no scopes / permissions required) to GitHub, a PAT is recommended instead of your password
+# ADDON_DOWNLOAD_DIRECTORY is the name of the directory where the addon files will be stored
+# DOWNLOAD_THREAD_COUNT is the amount of threads the script will use for downloading addons, a higher number typically increases the downloading speed up to a certain point
+# UNSTABLE_GITHUB_RELEASES determines whether the script should go for the latest stable release, or just the latest release, which could be a prerelease (some addons only have prereleases, in which case nothing will be downloaded if this option is set to stable releases only)
+
+# GitHub authentication is required because the Rest API rate limit is higher for authenticated requests,
+#   and this tool has a lot of requests to GH, only getting info from addons' releases,
+#   so it doesn't need extra permissions
+
+{
+	"SKUNITY_API_KEY": "<skUnity API key>",
+	"GITHUB_USERNAME": "<GitHub username>",
+	"GITHUB_ACCESS_TOKEN": "<GitHub password / Personal Access Token>",
+	"ADDON_DOWNLOAD_DIRECTORY": "addons",
+	"DOWNLOAD_THREAD_COUNT": 4,
+	"UNSTABLE_GITHUB_RELEASES": true
+}
