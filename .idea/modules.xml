@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/AddonChecker.iml" filepath="$PROJECT_DIR$/.idea/AddonChecker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaUsageChecker/JavaUsageChecker.iml" filepath="$PROJECT_DIR$/JavaUsageChecker/JavaUsageChecker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/skUnity addon downloader/skUnity addon downloader.iml" filepath="$PROJECT_DIR$/skUnity addon downloader/skUnity addon downloader.iml" />
+    </modules>
+  </component>
+</project>
