@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+// TODO javadocs
 public class JavaUsageChecker {
 
     @SuppressWarnings("UnusedReturnValue")
