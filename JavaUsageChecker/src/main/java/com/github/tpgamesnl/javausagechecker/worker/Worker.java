@@ -7,6 +7,7 @@ public class Worker<T extends Task> extends Thread {
     private final Queue<T> taskQueue;
 
     public Worker(Queue<T> taskQueue, String name) {
+        super(name);
         this.taskQueue = taskQueue;
     }
 
@@ -23,7 +24,7 @@ public class Worker<T extends Task> extends Thread {
 
             try {
                 task.perform();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 new RuntimeException("Task " + task + " threw an exception", e).printStackTrace();
             }
         }

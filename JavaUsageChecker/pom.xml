@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>9.1</version>
+            <version>9.3</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -48,6 +48,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <finalName>JavaUsageChecker</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
@@ -59,6 +60,7 @@
                             </mainClass>
                         </manifest>
                     </archive>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>
         </plugins>

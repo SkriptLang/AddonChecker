@@ -111,6 +111,23 @@ public class Main {
             System.out.println("Query: " + query);
         }
 
+        builder.stateTracker(new StateTracker() {
+            @Override
+            void updateState(State state) {
+                System.out.println("New state: " + state);
+            }
+
+            @Override
+            void jarOpenedCountUpdated(int count) {
+                System.out.println("jars opened: " + count);
+            }
+
+            @Override
+            void classesCheckedCountUpdated(int count) {
+                System.out.println("classes checked: " + count);
+            }
+        });
+
         List<Report> reports = builder.create()
                 .start()
                 .join()
@@ -208,8 +225,34 @@ public class Main {
     private static void sendUsage(boolean invalidSyntax) {
         PrintStream out = invalidSyntax ? System.err : System.out;
 
-        // TODO usage
-        out.println("usage");
+        out.println("Usage: java -jar JavaUsageChecker.jar <options>");
+        out.println();
+        out.println("Possible options:");
+        out.println("  f:<file path>");
+        out.println("  d:<directory path>");
+        out.println("  q:<query>");
+        out.println();
+        out.println("Query syntax:");
+        out.println("  <prefix>:<key>=<value>;<key>=<value>;<key>=<value> etc");
+        out.println();
+        out.println("  Possible prefixes are c(lass), f(ield) and m(ethod)");
+        out.println();
+        out.println("  For all prefixes, the n(ame) key refers to the name of the respective object (class, field or method)");
+        out.println("  For fields and methods, o(wner) refers to the class that defined the member");
+        out.println("  For fields and methods, d(escriptor) refers to the (method or field) descriptor of the member");
+        out.println();
+        out.println("  All values can be prefixed by either [c], [e] or [w] ([c] being the default)");
+        out.println("  These are different methods of string comparisons:");
+        out.println("    [c] checks if the value is contained in the string");
+        out.println("    [e] checks if the value is exactly equal to the string");
+        out.println("    [w] checks if the value is a word (separated by .) within the string, mostly useful for class names");
+        out.println();
+        out.println();
+        out.println("Examples:");
+        out.println("  java -jar JavaUsageChecker.jar f:MyJavaProgram.jar q:m:n=get");
+        out.println("    looks for method usages of methods with names containing 'get' in the file MyJavaProgram.jar");
+        out.println("  java -jar JavaUsageChecker.jar d:\"java testing\" q:c:n=[w]Info");
+        out.println("    looks for class usages of classes with names containing the word 'Info' in the directory 'java testing'");
     }
 
 }
