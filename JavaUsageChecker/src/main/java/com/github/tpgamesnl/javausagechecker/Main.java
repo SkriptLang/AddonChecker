@@ -1,5 +1,6 @@
 package com.github.tpgamesnl.javausagechecker;
 
+import com.github.tpgamesnl.javausagechecker.query.ClassQuery;
 import com.github.tpgamesnl.javausagechecker.query.FieldQuery;
 import com.github.tpgamesnl.javausagechecker.query.MethodQuery;
 import com.github.tpgamesnl.javausagechecker.query.Query;
@@ -106,17 +107,17 @@ public class Main {
             return;
         }
 
-        Map<Query, List<ReportedUsage>> reports = builder.create()
+        for (Query query : builder.getQueries()) {
+            System.out.println("Query: " + query);
+        }
+
+        List<Report> reports = builder.create()
                 .start()
                 .join()
                 .getReports();
 
-        for (Query query : reports.keySet()) {
-            List<ReportedUsage> reportedUsages = reports.get(query);
-            System.out.println("Query: " + query + " (" + reportedUsages.size() + " found)");
-            for (ReportedUsage usage : reportedUsages) {
-                System.out.println("-  " + usage);
-            }
+        for (Report report : reports) {
+            System.out.println("-  " + report);
         }
     }
 
@@ -133,7 +134,7 @@ public class Main {
             return null;
         }
 
-        // type: 'f', 'm' or 'c'
+        // type: starts with 'f', 'm' or 'c'
         String type = matcher.group("type");
 
         String tagsString = matcher.group("tags");
@@ -149,15 +150,16 @@ public class Main {
                 value = value.substring(1, value.length() - 1);
             }
 
-            StringCheck.Method method;
+            StringCheck.Method method = StringCheck.Method.CONTAINS;
             if (value.startsWith("[c]")) {
                 method = StringCheck.Method.CONTAINS;
                 value = value.substring(3);
             } else if (value.startsWith("[e]")) {
                 method = StringCheck.Method.EXACT;
                 value = value.substring(3);
-            } else {
+            } else if (value.startsWith("[w]")) {
                 method = StringCheck.Method.CONTAINS_WORD;
+                value = value.substring(3);
             }
 
             StringCheck stringCheck = new StringCheck(method, value);
@@ -180,8 +182,10 @@ public class Main {
                     return new MethodQuery(ownerCheck, nameCheck, descriptorCheck);
                 }
             }
-
-            // TODO class
+            case "c": {
+                StringCheck nameCheck = getCheck(tags, "n", "name");
+                return new ClassQuery(nameCheck);
+            }
         }
 
         return null;

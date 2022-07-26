@@ -23,6 +23,11 @@ public class MethodQuery implements Query {
     }
 
     @Override
+    public boolean checkClassUsage(String name) {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "MethodQuery{" +
                 "owner=" + owner +

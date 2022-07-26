@@ -43,7 +43,7 @@ public class StringCheck {
         CONTAINS_WORD {
             @Override
             boolean match(String query, String s) {
-                int i = 0;
+                int i = -1;
                 while ((i = s.indexOf(query, i + 1)) != -1) {
                     if (i == 0 || s.charAt(i - 1) == '.') {
                         if (i + query.length() == s.length() || s.charAt(i + query.length()) == '.') {
@@ -69,22 +69,36 @@ public class StringCheck {
 
     public StringCheck(Method method, @Nullable String query) {
         this.method = method;
-        this.query = query == null ? null : query.toLowerCase(Locale.ROOT);
+        this.query = query;// == null ? null : query.toLowerCase(Locale.ROOT);
     }
 
     public boolean match(String s) {
         if (this.query == null)
             return true;
 
-        return this.method.match(this.query, s.toLowerCase(Locale.ROOT));
+        return this.method.match(this.query, s);
     }
 
     @Override
     public String toString() {
-        return "StringCheck{" +
-                "method=" + method +
-                ", query='" + query + '\'' +
-                '}';
+        if (query == null) {
+            return "";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        switch (method) {
+            case EXACT:
+                stringBuilder.append("[e]");
+                break;
+            case CONTAINS:
+                stringBuilder.append("[c]");
+                break;
+            case CONTAINS_WORD:
+                stringBuilder.append("[w]");
+                break;
+        }
+        stringBuilder.append(query);
+        return stringBuilder.toString();
     }
 
 }

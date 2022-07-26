@@ -6,4 +6,8 @@ public interface Query {
 
     boolean checkFieldAccess(int opcode, String owner, String name, String descriptor);
 
+    boolean checkClassUsage(String name);
+
+
+
 }

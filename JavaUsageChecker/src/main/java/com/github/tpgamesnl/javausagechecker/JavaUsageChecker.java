@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.jar.JarEntry;
@@ -127,9 +125,11 @@ public class JavaUsageChecker {
                     return;
                 }
 
+                String className = jarEntry.getName().replace('/', '.');
+
                 ClassReader classReader = new ClassReader(inputStream);
 
-                ClassVisitor usageCheckerCV = new UsageCheckerCV(null, JavaUsageChecker.this, jarFile.getName(), jarEntry.getName());
+                ClassVisitor usageCheckerCV = new UsageCheckerCV(null, JavaUsageChecker.this, jarFile.getName(), className);
                 classReader.accept(usageCheckerCV, 0);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -139,7 +139,7 @@ public class JavaUsageChecker {
 
     private final List<File> files;
     private final List<Query> queries;
-    private final Map<Query, List<ReportedUsage>> reports;
+    private final List<Report> reports;
 
     private final int workerCount;
 
@@ -148,10 +148,7 @@ public class JavaUsageChecker {
     public JavaUsageChecker(List<File> files, List<Query> queries, int workerCount) {
         this.files = files;
         this.queries = queries;
-        this.reports = new HashMap<>();
-        for (Query query : queries) {
-            reports.put(query, new ArrayList<>());
-        }
+        this.reports = new ArrayList<>();
         this.workerCount = workerCount;
     }
 
@@ -210,34 +207,41 @@ public class JavaUsageChecker {
         return this;
     }
 
-    public Map<Query, List<ReportedUsage>> getReports() {
+    public List<Report> getReports() {
         return reports;
     }
 
-    public void reportMethodAccess(String jarFilePath, String sourceFilePath, String sourceMethodName, String sourceMethodDescriptor,
-                                   int opcode, String owner, String name, String descriptor, boolean isInterface) {
-        sourceFilePath = sourceFilePath.replace('/', '.');
+    public void report(Report usage) {
+        reports.add(usage);
+    }
+
+    public void reportMethodAccess(ClassLocation.Method.Code code, int opcode, String owner, String name, String descriptor, boolean isInterface) {
         owner = owner.replace('/', '.');
 
         for (Query query : queries) {
             if (query.checkMethodAccess(opcode, owner, name, descriptor, isInterface)) {
-                ReportedUsage usage = ReportedUsage.method(jarFilePath, sourceFilePath, sourceMethodName, sourceMethodDescriptor);
-
-                reports.get(query).add(usage);
+                // TODO include details of invoked method, same for others below
+                report(new Report(code, query));
             }
         }
     }
 
-    public void reportFieldAccess(String jarFilePath, String sourceFilePath, String sourceMethodName, String sourceMethodDescriptor,
-                                  int opcode, String owner, String name, String descriptor) {
-        sourceFilePath = sourceFilePath.replace('/', '.');
+    public void reportFieldAccess(ClassLocation.Method.Code code, int opcode, String owner, String name, String descriptor) {
         owner = owner.replace('/', '.');
 
         for (Query query : queries) {
             if (query.checkFieldAccess(opcode, owner, name, descriptor)) {
-                ReportedUsage usage = ReportedUsage.method(jarFilePath, sourceFilePath, sourceMethodName, sourceMethodDescriptor);
+                report(new Report(code, query));
+            }
+        }
+    }
 
-                reports.get(query).add(usage);
+    public void reportClassUsage(ClassLocation location, String name) {
+        name = name.replace('/', '.');
+
+        for (Query query : queries) {
+            if (query.checkClassUsage(name)) {
+                report(new Report(location, query));
             }
         }
     }

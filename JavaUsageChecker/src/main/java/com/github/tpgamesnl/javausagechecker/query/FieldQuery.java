@@ -23,6 +23,11 @@ public class FieldQuery implements Query {
     }
 
     @Override
+    public boolean checkClassUsage(String name) {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "FieldQuery{" +
                 "owner=" + owner +
